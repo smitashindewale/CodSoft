@@ -1,0 +1,113 @@
+//Code for ATM INTERFACE
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class ATMSimulation {
+    private static double balance = 10000.0;
+    private static int pin = 3003;
+    private static ArrayList<String> transactionHistory = new ArrayList<>();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("\nWelcome to the Automatic Teller Machine");
+            System.out.println("1. Inquire account funds");
+            System.out.println("2. Withdraw currency");
+            System.out.println("3. Deposit currency");
+            System.out.println("4. Modify personal identification number");
+            System.out.println("5. Print The History");
+            System.out.println("6. Exit");
+            System.out.print("  \nSelect an option: ");
+
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    if (verifyPin()) {
+                        balanceInquiry();
+                    } else {
+                        System.out.println("Incorrect PIN.");
+                    }
+                    break;
+                case 2:
+                    if (verifyPin()) {
+                        cashWithdrawal();
+                    } else {
+                        System.out.println("Incorrect PIN.");
+                    }
+                    break;
+                case 3:
+                    cashDeposit();
+                    break;
+                case 4:
+                    pinChange();
+                    break;
+                case 5:
+                    showTransactionHistory();
+                    break;
+                case 6:
+                    System.out.println("Thank you for using the ATM. Goodbye!");
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static boolean verifyPin() {
+        System.out.print("Enter your PIN: ");
+        int enteredPin = scanner.nextInt();
+        return enteredPin == pin;
+    }
+
+    private static void balanceInquiry() {
+        System.out.println("Your current balance is: $" + balance);
+        transactionHistory.add("Balance Inquiry: $" + balance);
+    }
+
+    private static void cashWithdrawal() {
+        System.out.print("Enter amount to withdraw: ");
+        double amount = scanner.nextDouble();
+        if (amount > balance) {
+            System.out.println("Insufficient balance.");
+        } else {
+            balance -= amount;
+            System.out.println("Please take your cash! \nRemaining balance: $" + balance);
+            transactionHistory.add("Cash Withdrawal: $" + amount);
+        }
+    }
+
+    private static void cashDeposit() {
+        System.out.print("Enter amount to deposit: ");
+        double amount = scanner.nextDouble();
+        balance += amount;
+        System.out.println("Amount deposited successfully. New balance: $" + balance);
+        transactionHistory.add("Cash Deposit: $" + amount);
+    }
+
+    private static void pinChange() {
+        System.out.print("Enter current PIN: ");
+        int currentPin = scanner.nextInt();
+        if (currentPin == pin) {
+            System.out.print("Enter new PIN: ");
+            int newPin = scanner.nextInt();
+            pin = newPin;
+            System.out.println("PIN changed successfully.");
+            transactionHistory.add("PIN Change");
+        } else {
+            System.out.println("Incorrect PIN.");
+        }
+    }
+
+    private static void showTransactionHistory() {
+        System.out.println("Transaction History:");
+        if (transactionHistory.isEmpty()) {
+            System.out.println("No transactions yet.");
+        } else {
+            for (String transaction : transactionHistory) {
+                System.out.println(transaction);
+            }
+        }
+    }
+}
