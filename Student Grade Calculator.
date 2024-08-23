@@ -1,0 +1,17 @@
+//Code for Student Grade Calculator.
+import java.util.Scanner; 
+public class StudentGrades {
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in); 
+        System.out.print("Subjects: "); 
+        int n = s.nextInt(), t = 0, m[] = new int[n];
+        for (int i = 0; i < n; i++) {
+            System.out.print("Marks " + (i + 1) + ": ");
+            t += m[i] = s.nextInt();
+        }
+        double a = (double) t / n; 
+        String g = a >= 90 ? "A" : a >= 80 ? "B" : a >= 70 ? "C" : a >= 60 ? "D" : "F";
+        System.out.printf("Total: %d\nAverage: %.2f%%\nGrade: %s", t, a, g); 
+        s.close();
+    }
+}
