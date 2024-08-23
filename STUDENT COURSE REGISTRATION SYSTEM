@@ -1,0 +1,176 @@
+//Code for STUDENT COURSE REGISTRATION SYSTEM
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+// Course class to store course information
+class Course {
+    String code;
+    String title;
+    String description;
+    int capacity;
+    int enrolled;
+    String schedule;
+
+    public Course(String code, String title, String description, int capacity, String schedule) {
+        this.code = code;
+        this.title = title;
+        this.description = description;
+        this.capacity = capacity;
+        this.enrolled = 0;
+        this.schedule = schedule;
+    }
+
+    public boolean isAvailable() {
+        return enrolled < capacity;
+    }
+
+    public void enrollStudent() {
+        if (isAvailable()) {
+            enrolled++;
+        }
+    }
+
+    public void removeStudent() {
+        if (enrolled > 0) {
+            enrolled--;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Code: %s, Title: %s, Description: %s, Capacity: %d, Enrolled: %d, Schedule: %s",
+                code, title, description, capacity, enrolled, schedule);
+    }
+}
+
+// Student class to store student information
+class Student {
+    String id;
+    String name;
+    List<String> registeredCourses;
+
+    public Student(String id, String name) {
+        this.id = id;
+        this.name = name;
+        this.registeredCourses = new ArrayList<>();
+    }
+
+    public void addCourse(String courseCode) {
+        registeredCourses.add(courseCode);
+    }
+
+    public void removeCourse(String courseCode) {
+        registeredCourses.remove(courseCode);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ID: %s, Name: %s, Registered Courses: %s", id, name, registeredCourses);
+    }
+}
+
+// CourseManager class to manage courses and registrations
+class CourseManager {
+    private Map<String, Course> courses = new HashMap<>();
+    private Map<String, Student> students = new HashMap<>();
+
+    public void addCourse(Course course) {
+        courses.put(course.code, course);
+    }
+
+    public void addStudent(Student student) {
+        students.put(student.id, student);
+    }
+
+    public void listCourses() {
+        System.out.println("Available Courses:");
+        for (Course course : courses.values()) {
+            System.out.println(course);
+        }
+    }
+
+    public void registerStudent(String studentId, String courseCode) {
+        Student student = students.get(studentId);
+        Course course = courses.get(courseCode);
+
+        if (student != null && course != null) {
+            if (course.isAvailable()) {
+                student.addCourse(courseCode);
+                course.enrollStudent();
+                System.out.println("Registered successfully.");
+            } else {
+                System.out.println("Course is full.");
+            }
+        } else {
+            System.out.println("Student or Course not found.");
+        }
+    }
+
+    public void removeCourseForStudent(String studentId, String courseCode) {
+        Student student = students.get(studentId);
+        Course course = courses.get(courseCode);
+
+        if (student != null && course != null) {
+            student.removeCourse(courseCode);
+            course.removeStudent();
+            System.out.println("Course removed successfully.");
+        } else {
+            System.out.println("Student or Course not found.");
+        }
+    }
+}
+
+// Main class to interact with the system
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CourseManager manager = new CourseManager();
+
+        // Sample data
+        manager.addCourse(new Course("CS101", "Intro to Computer Science", "Basics of Computer Science", 30, "Mon-Wed-Fri 10:00-11:00"));
+        manager.addCourse(new Course("CS102", "Data Structures", "Introduction to Data Structures", 25, "Tue-Thu 14:00-15:30"));
+
+        manager.addStudent(new Student("S1", "Alice"));
+        manager.addStudent(new Student("S2", "Bob"));
+
+        String choice;
+        do {
+            System.out.println("1. List Courses");
+            System.out.println("2. Register for a Course");
+            System.out.println("3. Drop a Course");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.next();
+
+            switch (choice) {
+                case "1":
+                    manager.listCourses();
+                    break;
+                case "2":
+                    System.out.print("Enter Student ID: ");
+                    String regStudentId = scanner.next();
+                    System.out.print("Enter Course Code: ");
+                    String regCourseCode = scanner.next();
+                    manager.registerStudent(regStudentId, regCourseCode);
+                    break;
+                case "3":
+                    System.out.print("Enter Student ID: ");
+                    String dropStudentId = scanner.next();
+                    System.out.print("Enter Course Code: ");
+                    String dropCourseCode = scanner.next();
+                    manager.removeCourseForStudent(dropStudentId, dropCourseCode);
+                    break;
+                case "4":
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        } while (!choice.equals("4"));
+
+        scanner.close();
+    }
+}
